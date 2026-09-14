@@ -17,7 +17,8 @@ def spherical_tophat(x: ArrayLike) -> FloatArray:
 
     Direct evaluation loses precision near the origin because ``sin(x)`` and
     ``x*cos(x)`` nearly cancel. The local Horner-form series is used for
-    ``|x| < 0.08`` to guarantee full 64-bit IEEE-754 precision everywhere.
+    ``|x| < 0.08`` to reduce cancellation. Relative accuracy is not uniform
+    near zeros of the oscillatory window.
     """
     values = np.asarray(x, dtype=np.float64)
     if np.any(~np.isfinite(values)):

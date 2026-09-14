@@ -1,0 +1,18 @@
+{
+  "commit": "ae9609e1f96ddebbb6cc8a46de94512514c68781",
+  "command": [
+    "make",
+    "-B",
+    "-j2",
+    "class",
+    "CC=clang",
+    "CPP=clang++ -std=c++11",
+    "OMPFLAG=-pthread",
+    "OPTFLAG=-O3"
+  ],
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.5.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin\n",
+  "executable_sha256": "3f39beaa4997d718ab30ae678adbd4de4a13e95c13469073136251ed15af8a16",
+  "build_log": "validation/builds/axiclass.log",
+  "build_log_sha256": "1e3a847952ae87ffb3cd6d0a382798ed7693ce69c2feeb6f7435cab20b25c8cb"
+}

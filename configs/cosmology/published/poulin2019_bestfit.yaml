@@ -1,0 +1,12 @@
+# Poulin et al. (2019) Planck+BAO+SN+SH0ES EDE best-fit cosmology
+model_name: "poulin2019_bestfit"
+omega_b: 0.02251
+omega_cdm: 0.1320
+h: 0.7281
+A_s: 2.158e-9
+n_s: 0.9880
+tau_reio: 0.0543
+f_ede: 0.122
+log10_z_c: 3.531
+theta_i: 2.83
+potential_index: 3

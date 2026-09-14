@@ -1,0 +1,143 @@
+{
+  "passed": true,
+  "complete": true,
+  "gate": {
+    "description": "Declared before corrected runner comparisons. CLASS forks share ancestral code; this is implementation diversity, not fully independent algorithms.",
+    "models": [
+      "lcdm_reference",
+      "ede_weak",
+      "ede_central",
+      "ede_strong"
+    ],
+    "redshifts": [
+      0,
+      0.5,
+      1,
+      2,
+      3,
+      5,
+      7,
+      8,
+      10,
+      15,
+      20,
+      30
+    ],
+    "k_min": 0.0001,
+    "k_max": 100,
+    "k_points": 1025,
+    "compare_k_min": 0.01,
+    "compare_k_max": 5,
+    "compare_z_max": 5,
+    "hubble_relative_tolerance": 0.002,
+    "power_relative_tolerance": 0.01,
+    "sigma_relative_tolerance": 0.005,
+    "growth_relative_tolerance": 0.005,
+    "shooting_fraction_relative_tolerance": 0.005,
+    "shooting_redshift_relative_tolerance": 0.02,
+    "sigma8_relative_tolerance": 0.001
+  },
+  "gate_sha256": "e1b751d97eb01e6c07488a00027de323a4a7468c5e934ef3ca96198b22a2ec90",
+  "models": [
+    {
+      "model": "lcdm_reference",
+      "H_relative": 0.0,
+      "P_relative": 2.0953048354810377e-05,
+      "sigma_relative": 3.2040978137359843e-07,
+      "D_relative": 1.1165811829694228e-05,
+      "sigma8_relative": 6.027158848609382e-05,
+      "shooting": [
+        {
+          "solver": "axiclass",
+          "f_ede": 0.0,
+          "z_c": 0.0,
+          "fraction_error": 0.0,
+          "redshift_error": 0.0
+        },
+        {
+          "solver": "class_ede",
+          "f_ede": 0.0,
+          "z_c": 0.0,
+          "fraction_error": 0.0,
+          "redshift_error": 0.0
+        }
+      ],
+      "passed": true
+    },
+    {
+      "model": "ede_weak",
+      "H_relative": 5.690316335127399e-06,
+      "P_relative": 5.716642873521138e-06,
+      "sigma_relative": 6.732063901893071e-07,
+      "D_relative": 1.5572314548961685e-09,
+      "sigma8_relative": 5.869050089313266e-05,
+      "shooting": [
+        {
+          "solver": "axiclass",
+          "f_ede": 0.04999999864696,
+          "z_c": 3547.260529005,
+          "fraction_error": 2.7060799989708784e-08,
+          "redshift_error": 0.00024614723041862716
+        },
+        {
+          "solver": "class_ede",
+          "f_ede": 0.04999999478427652,
+          "z_c": 3548.267672662,
+          "fraction_error": 1.0431446970105007e-07,
+          "redshift_error": 3.7704418803419296e-05
+        }
+      ],
+      "passed": true
+    },
+    {
+      "model": "ede_central",
+      "H_relative": 1.2303569719707141e-05,
+      "P_relative": 6.7221207906698055e-06,
+      "sigma_relative": 1.237742472959269e-06,
+      "D_relative": 2.1069002098528244e-09,
+      "sigma8_relative": 5.5933268637398115e-05,
+      "shooting": [
+        {
+          "solver": "axiclass",
+          "f_ede": 0.1000000023408,
+          "z_c": 3547.260529005,
+          "fraction_error": 2.340799998279408e-08,
+          "redshift_error": 0.00024614723041862716
+        },
+        {
+          "solver": "class_ede",
+          "f_ede": 0.09999999292341845,
+          "z_c": 3548.267672662,
+          "fraction_error": 7.076581556852979e-08,
+          "redshift_error": 3.7704418803419296e-05
+        }
+      ],
+      "passed": true
+    },
+    {
+      "model": "ede_strong",
+      "H_relative": 1.1760343142097618e-05,
+      "P_relative": 6.889112772134887e-06,
+      "sigma_relative": 1.3142949522038094e-06,
+      "D_relative": 1.7697203702482511e-09,
+      "sigma8_relative": 5.3440531272874736e-05,
+      "shooting": [
+        {
+          "solver": "axiclass",
+          "f_ede": 0.1499999786116,
+          "z_c": 3548.404548882,
+          "fraction_error": 1.4258933330365173e-07,
+          "redshift_error": 7.628137901781251e-05
+        },
+        {
+          "solver": "class_ede",
+          "f_ede": 0.1499999981227363,
+          "z_c": 3548.267672662,
+          "fraction_error": 1.2515091370642514e-08,
+          "redshift_error": 3.7704418803419296e-05
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

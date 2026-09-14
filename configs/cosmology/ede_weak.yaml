@@ -1,0 +1,12 @@
+# Weak Early Dark Energy Model (f_EDE = 0.05)
+model_name: "ede_weak"
+omega_b: 0.02250
+omega_cdm: 0.1250
+h: 0.6950
+A_s: 2.120e-9
+n_s: 0.9720
+tau_reio: 0.0544
+f_ede: 0.05
+log10_z_c: 3.55
+theta_i: 2.83
+potential_index: 3

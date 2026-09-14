@@ -3,12 +3,20 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
 .venv/
 venv/
 build/
 dist/
 *.egg-info/
-# Reproducible outputs are regenerated from tracked manifests and code.
+
+# Scratch and external build directories
+scratch/
+external/AxiCLASS/
+external/class_ede/
+external/bin/
+
+# Reproducible data and artifacts
 artifacts/
 data/raw/
 data/processed/
@@ -24,16 +32,21 @@ experiments/results/
 *.parquet
 *.fits
 *.snapshot
+*.tar.gz
+
+# LaTeX build artifacts
 *.aux
 *.bbl
 *.blg
 *.log
 *.out
+*.toc
 *.fdb_latexmk
 *.fls
 *.synctex.gz
-docs/theory/*.pdf
-!docs/theory/hmf_foundations.pdf
+papers/*.pdf
+!papers/ede_halo_abundance.pdf
+
 private/
 .Rhistory
 .DS_Store

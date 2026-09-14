@@ -31,11 +31,12 @@ classifiers = [
 dependencies = [
   "numpy>=2.0",
   "scipy>=1.13",
+  "PyYAML>=6.0",
 ]
 
 [project.urls]
 Homepage = "https://github.com/Blake-Bird/ede-halo-abundance"
-Documentation = "https://github.com/Blake-Bird/ede-halo-abundance/blob/main/docs/theory/hmf_foundations.pdf"
+Documentation = "https://github.com/Blake-Bird/ede-halo-abundance/blob/main/papers/ede_halo_abundance.pdf"
 Repository = "https://github.com/Blake-Bird/ede-halo-abundance"
 "Bug Tracker" = "https://github.com/Blake-Bird/ede-halo-abundance/issues"
 
@@ -54,6 +55,7 @@ validation = [
 plots = [
   "matplotlib>=3.9",
 ]
+data = ["pandas>=2.2", "pyarrow>=17"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -62,11 +64,16 @@ include = ["dmra*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-config --strict-markers"
+markers = [
+  "external_solver: requires the pinned, locally built AxiCLASS and/or CLASS_EDE executables",
+]
 
 [tool.ruff]
 target-version = "py311"
 line-length = 100
 src = ["src", "tests", "scripts"]
+exclude = ["external", "scratch", ".venv", "build", "dist"]
+
 
 [tool.ruff.lint]
 select = [
@@ -83,3 +90,15 @@ strict = true
 packages = ["dmra"]
 warn_unreachable = true
 show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = [
+  "yaml.*",
+  "yaml",
+  "pandas.*",
+  "pandas",
+  "colossus.*",
+  "colossus",
+  "scipy.integrate.*",
+]
+ignore_missing_imports = true

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from numpy.typing import ArrayLike
-from scipy.integrate import simpson  # type: ignore[import-untyped]
+from scipy.integrate import simpson
 
 from dmra._typing import FloatArray
 from dmra.cosmology.background import FlatLambdaCDM
@@ -51,8 +51,8 @@ class VarianceCalculator:
     """
 
     def __init__(self, power: TabulatedPowerSpectrum, *, chunk_size: int = 256) -> None:
-        if chunk_size <= 0:
-            raise ValueError("chunk_size must be positive")
+        if isinstance(chunk_size, bool) or not isinstance(chunk_size, int) or chunk_size <= 0:
+            raise ValueError("chunk_size must be a positive integer")
         self._power = power
         self._chunk_size = chunk_size
         self._lnk = np.log(power.k)
@@ -65,8 +65,8 @@ class VarianceCalculator:
     def sigma_r(self, radius: ArrayLike, *, compute_derivative: bool = True) -> VarianceResult:
         """Evaluate ``sigma(R)`` for one or more positive radii."""
         radii = np.atleast_1d(np.asarray(radius, dtype=np.float64))
-        if radii.ndim != 1:
-            raise ValueError("radius must be one-dimensional")
+        if radii.ndim != 1 or radii.size == 0:
+            raise ValueError("radius must be nonempty and one-dimensional")
         if np.any(~np.isfinite(radii)) or np.any(radii <= 0.0):
             raise ValueError("radius must be finite and positive")
 

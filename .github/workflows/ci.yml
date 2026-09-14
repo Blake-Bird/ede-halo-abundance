@@ -27,6 +27,6 @@ jobs:
       - name: Mypy
         run: mypy src
       - name: Tests
-        run: pytest -q
+        run: pytest -q -m "not external_solver"
       - name: foundational deterministic validation
         run: python scripts/validate_hmf_foundations.py

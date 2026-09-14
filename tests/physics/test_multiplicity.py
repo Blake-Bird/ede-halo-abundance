@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.integrate import simpson
+from scipy.integrate import simpson  # type: ignore[import-untyped]
 
 from dmra.statistics.multiplicity import PressSchechter, ShethTormen
 

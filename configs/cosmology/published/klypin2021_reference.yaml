@@ -1,0 +1,12 @@
+# Klypin et al. (2021) Early Dark Energy reference cosmology
+model_name: "klypin2021_reference"
+omega_b: 0.02253
+omega_cdm: 0.1306
+h: 0.7219
+A_s: 2.184e-9
+n_s: 0.9889
+tau_reio: 0.0544
+f_ede: 0.107
+log10_z_c: 3.562
+theta_i: 2.81
+potential_index: 3

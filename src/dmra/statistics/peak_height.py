@@ -13,7 +13,7 @@ def peak_height(sigma: ArrayLike, *, delta_c: float = DEFAULT_DELTA_C) -> FloatA
     r"""Return :math:`\nu = \delta_c / \sigma`.
 
     Some literature uses ``nu`` for ``delta_c^2 / sigma^2``. This project does
-    not. The convention is frozen here and documented in ``docs/NOTATION.md``.
+    not. The convention is frozen here and documented in ``docs/CONVENTIONS.md``.
     """
     sigma_array = np.asarray(sigma, dtype=np.float64)
     if np.any(~np.isfinite(sigma_array)) or np.any(sigma_array <= 0.0):

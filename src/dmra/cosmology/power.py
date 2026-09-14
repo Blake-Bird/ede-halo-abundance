@@ -36,8 +36,8 @@ class TabulatedPowerSpectrum:
     _interpolator_extrap: PchipInterpolator = field(init=False, repr=False, compare=False)
 
     def __post_init__(self) -> None:
-        k = np.asarray(self.k, dtype=np.float64)
-        pk = np.asarray(self.pk, dtype=np.float64)
+        k = np.array(self.k, dtype=np.float64, copy=True)
+        pk = np.array(self.pk, dtype=np.float64, copy=True)
 
         if k.ndim != 1 or pk.ndim != 1:
             raise ValueError("k and pk must be one-dimensional")
@@ -54,6 +54,8 @@ class TabulatedPowerSpectrum:
 
         log_k = np.log(k)
         log_pk = np.log(pk)
+        k.setflags(write=False)
+        pk.setflags(write=False)
 
         object.__setattr__(self, "k", k)
         object.__setattr__(self, "pk", pk)

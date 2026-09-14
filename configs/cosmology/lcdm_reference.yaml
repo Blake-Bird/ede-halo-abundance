@@ -1,0 +1,12 @@
+# Planck 2018 LCDM Reference Baseline
+model_name: "lcdm_reference"
+omega_b: 0.02237
+omega_cdm: 0.1200
+h: 0.6736
+A_s: 2.100e-9
+n_s: 0.9649
+tau_reio: 0.0544
+f_ede: 0.0
+log10_z_c: 3.55
+theta_i: 2.83
+potential_index: 3

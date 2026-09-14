@@ -1,0 +1,12 @@
+# Central Early Dark Energy Model (f_EDE = 0.10)
+model_name: "ede_central"
+omega_b: 0.02260
+omega_cdm: 0.1300
+h: 0.7210
+A_s: 2.150e-9
+n_s: 0.9850
+tau_reio: 0.0544
+f_ede: 0.10
+log10_z_c: 3.55
+theta_i: 2.83
+potential_index: 3

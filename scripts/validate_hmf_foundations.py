@@ -16,7 +16,7 @@ from dmra.statistics.multiplicity import PressSchechter, ShethTormen, Tinker2008
 
 
 def main() -> None:
-    output = Path("artifacts/hmf_foundations")
+    output = Path("artifacts/tables")
     output.mkdir(parents=True, exist_ok=True)
 
     cosmology = FlatLambdaCDM(omega_m0=0.315, h=0.674)

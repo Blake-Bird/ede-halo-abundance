@@ -1,0 +1,88 @@
+{
+  "passed": true,
+  "config": {
+    "name": "lcdm_reference_planck_like",
+    "omega_m0": 0.315,
+    "omega_b0": 0.049,
+    "h": 0.674,
+    "sigma8": 0.811,
+    "n_s": 0.965,
+    "mass_min": 1000000000,
+    "mass_max": 1000000000000000,
+    "mass_points": 80,
+    "k_min": 1e-06,
+    "k_max": 10000,
+    "k_points": 65537,
+    "sigma_relative_tolerance": 0.02,
+    "hmf_relative_tolerance": 0.01,
+    "grid_sigma_tolerance": 0.0001,
+    "grid_jacobian_tolerance": 0.001,
+    "edge_ratio_tolerance": 1e-08,
+    "delta_c": 1.68647
+  },
+  "config_sha256": "320d877712f9e344f3d472927e2f4d1a117af1964e099287816eb0de6b0502af",
+  "max_sigma_relative_error": 0.012005875918101538,
+  "max_edge_ratio": 1.5040061763159186e-11,
+  "comparisons": {
+    "PS": {
+      "colossus_multiplicity_max_relative": 0.0,
+      "hmf_multiplicity_max_relative": 0.0,
+      "colossus_abundance_max_relative": 0.0031144066153752092
+    },
+    "ST": {
+      "colossus_multiplicity_max_relative": 5.0791559499607786e-05,
+      "hmf_multiplicity_max_relative": 4.440892098500626e-16,
+      "colossus_abundance_max_relative": 0.002879508609452186
+    },
+    "Tinker2008": {
+      "colossus_multiplicity_max_relative": 0.0,
+      "hmf_multiplicity_max_relative": null,
+      "colossus_abundance_max_relative": 0.002881082764889964
+    }
+  },
+  "convergence": [
+    [
+      4097,
+      5.542315495432604e-10,
+      4.901075363328289e-07
+    ],
+    [
+      8193,
+      2.85493850782359e-11,
+      6.417594766716661e-08
+    ],
+    [
+      16385,
+      1.3681278332455804e-12,
+      6.260890028642052e-09
+    ],
+    [
+      32769,
+      8.093525849517391e-14,
+      5.833908911512253e-10
+    ],
+    [
+      65537,
+      0.0,
+      0.0
+    ]
+  ],
+  "packages": {
+    "numpy": "2.3.5",
+    "scipy": "1.16.3",
+    "colossus": "1.4.0",
+    "hmf": "3.6.3"
+  },
+  "python": "3.13.9",
+  "conventions": "The local integrator is verified by grid convergence. Colossus documents its Eisenstein-Hu variance approximation as accurate to about 2%; its 2% comparison threshold tests cross-package compatibility rather than an identical quadrature. Collapse corrections are disabled; ST uses analytic A rather than rounded 0.3222. Colossus HMF uses its interpolation and critical-density constant.",
+  "artifacts": {
+    "Tinker2008_comparison.csv": "03c2e47197624c15c04224f11d01194baaf7ef1d803d317ca3b8a6d3925065b0",
+    "physical_power.csv": "5ded9fa382ae3fba01b17489c8470cac03668db35ce3e28eb6b0d5ec6381374a",
+    "ST_comparison.csv": "afd7d8d96d05cd46e10d352077c865ce2b7d9e4dbf2bb23aa6e8d8e264e2b9ac",
+    "sigma_comparison.csv": "0489cf9819cd5a210fd797ade157d24aeff274bbfb57626248753cd47d3e47ce",
+    "grid_convergence.csv": "74debd1a39d22bad3c7b7c79c4afc5250fa045795b97b1137424526a0b74a1d1",
+    "PS_comparison.csv": "f852fd7a770cc909c986eba8c025b8dae92e67dbb684e8616e7f02ebf1484f43",
+    "colossus_seed_power.txt": "1a202b9bc4950090c1cabb65e8bff7593a0a7b7c68d07c901d81fb34f0227454",
+    "calibration.png": "4dedfd1011e15e260e7d094c9f38dc6a6554b9a541bfb4ea827b32b23f598a6a"
+  }
+}

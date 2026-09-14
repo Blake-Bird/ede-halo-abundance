@@ -1,0 +1,640 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!45!black,
+  citecolor=blue!45!black,
+  urlcolor=blue!45!black
+}
+\setlist[itemize]{topsep=3pt,itemsep=2pt}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt}
+
+\newcommand{\dd}{\,\mathrm d}
+\newcommand{\rhobar}{\bar{\rho}_{m,0}}
+\newcommand{\Mpc}{\mathrm{Mpc}}
+\newcommand{\Msun}{M_\odot}
+\newcommand{\LCDM}{\Lambda\mathrm{CDM}}
+\newcommand{\fEDE}{f_{\mathrm{EDE}}}
+\newcommand{\zc}{z_c}
+\newcommand{\thetai}{\theta_i}
+
+\title{\textbf{From Early Dark Energy Scalar Field Dynamics to Dark Matter Halo Abundance:}\\[0.5ex]
+\large Theoretical Foundations, Linear Growth, and Non-Universal Mass Function Foundations}
+\author{Blake Bird}
+\date{September 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Early Dark Energy (EDE) has emerged as a leading cosmological hypothesis to alleviate the Hubble tension by injecting a transient, dynamical component prior to recombination that reduces the sound horizon. Assessing whether such an episode leaves an imprint on non-linear dark matter halo abundance requires an audited, end-to-end mathematical and numerical bridge from scalar field dynamics to halo statistics. In this paper, we develop the theoretical framework connecting the axion-like scalar field Lagrangian to the halo mass function (HMF). We derive the background expansion kinematics, the Turner (1983) virial equation of state for monomial potentials ($\langle w_\phi \rangle = (n-1)/(n+1) \to 1/2$ for $n=3$, yielding $\rho_\phi \propto a^{-4.5}$), sound horizon acoustics, linear perturbations in synchronous and conformal Newtonian gauges, and the Heath (1977) scale-dependent growth diagnostics. We formulate the convolution of the linear matter power spectrum with the real-space top-hat filter using an analytical Jacobian, avoiding numerical differentiation of the sampled mass relation. We examine the evolution of halo mass function universality across three decades of numerical and theoretical work---from Press--Schechter and Sheth--Tormen through Tinker to modern growth-history and spectral-shape descriptors. We specify invariance criteria for the $\Lambda\mathrm{CDM}$ limit, parameter shooting, $\sigma_8$ quadrature, and cross-solver comparisons; these become quantitative results only when accompanied by archived solver versions, configurations, manifests, and comparison tables. Finally, we formulate the matched-cosmology causal framework designed to isolate the physical memory of early growth history from instantaneous linear field descriptors.
+\end{abstract}
+
+\tableofcontents
+\vspace{1.5em}
+\hrule
+\vspace{1.5em}
+
+\section{Introduction and the Core Scientific Question}
+\label{sec:intro}
+
+The discrepancy between the local value of the Hubble constant measured by the Hubble Space Telescope and SH0ES ($H_0 = 73.04 \pm 1.04\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$) \cite{riess2022shoes} and the value inferred from Planck Cosmic Microwave Background (CMB) observations under flat $\Lambda\mathrm{CDM}$ ($H_0 = 67.36 \pm 0.54\,\mathrm{km\,s^{-1}\,Mpc^{-1}}$) \cite{planck2020params} constitutes a $>5\sigma$ statistical tension in modern physical cosmology \cite{KamionkowskiRiess2023,poulin2023review}. Among proposed resolutions, Early Dark Energy (EDE) introduces an axion-like scalar field that becomes dynamical around matter-radiation equality ($z_c \sim 10^{3.5}$), transiently contributing $f_{\rm EDE} \sim 8\text{--}12\%$ of the cosmic energy inventory before rapidly diluting away \cite{karwal2016ede,poulin2018ula,poulin2019ede}. By increasing the pre-recombination expansion rate $H(z)$, EDE decreases the comoving sound horizon $r_s(z_*)$, allowing CMB observations to be reconciled with a higher late-time expansion rate $H_0$.
+
+However, modifying the expansion rate at early times has profound consequences for cosmic structure formation. Matter fluctuations grow via gravitational instability against Hubble friction. A transient burst of accelerated expansion dampens the growth of subhorizon density perturbations, while the elevated physical matter density $\omega_m \equiv \Omega_m h^2$ required to preserve the CMB angular acoustic scale accelerates growth once the field has decayed \cite{klypin2021ede}. 
+
+The central scientific question of this research program is:
+\begin{quote}
+\emph{If an Early Dark Energy episode alters the expansion rate and linear growth history prior to recombination, does the resulting dark matter halo abundance retain memory of this non-standard dynamical history, or is it completely determined by the instantaneous linear field and modern spectral-shape descriptors?}
+\end{quote}
+
+Answering this question requires utmost theoretical and computational care. Over the past decade, precision $N$-body simulations have demonstrated that dark matter halo abundance is \emph{not} strictly universal: the halo multiplicity function $f(\sigma) \equiv dF/d\ln\sigma^{-1}$ depends systematically on redshift, cosmological background, and expansion history \cite{TinkerEtAl2008,WatsonEtAl2013,DespaliEtAl2016,OndaroMalleaEtAl2022}. Modern frameworks such as Evolution Mapping III \cite{FiorilliEtAl2026} have restored percent-level predictive accuracy across broad parameter spaces by parameterizing the halo mass function in terms of both recent growth history and the local spectral slope $n_{\rm eff}(M)$. Consequently, demonstrating that an EDE cosmology diverges from an older universal fit (such as Sheth--Tormen or Tinker 2008) is scientifically trivial. The true frontier is whether EDE leaves an independent physical signature that escapes modern growth-plus-shape parameterizations.
+
+Before conducting expensive $N$-body simulation campaigns and causal matching experiments, the mapping from EDE cosmological parameters to the linear matter power spectrum, growth factors, and halo variance must be derived and verified from first principles. A researcher cannot interpret subtle residuals in an $N$-body mass function if those residuals might be artifacts of solver shooting thresholds, unverified unit conventions, or silent power spectrum extrapolations.
+
+This paper establishes the complete, audited linear theory of Early Dark Energy and its rigorous bridge to dark matter halo statistics.
+
+\section{Axion-like Early Dark Energy: Lagrangian Action to Background Dynamics}
+\label{sec:scalar_dynamics}
+
+\subsection{Minimally coupled scalar field equation of motion}
+Consider a real scalar field $\phi$ minimally coupled to gravity in a spacetime with metric $g_{\mu\nu}$ (metric signature $-,+,+,+$). The scalar field action is
+\begin{equation}
+S_\phi = \int \dd^4x \sqrt{-g} \left[ -\frac{1}{2}g^{\mu\nu}\partial_\mu\phi\partial_\nu\phi - V(\phi) \right].
+\label{eq:scalar_action}
+\end{equation}
+Applying the principle of stationary action $\delta S_\phi = 0$ under field variations $\delta\phi$ that vanish on the spacetime boundary:
+\begin{align}
+\delta S_\phi &= \int \dd^4x \sqrt{-g} \left[ -g^{\mu\nu}\partial_\mu\phi\,\partial_\nu(\delta\phi) - V_{,\phi}\delta\phi \right] \nonumber\\
+&= \int \dd^4x \left[ \partial_\nu\left( -\sqrt{-g}g^{\mu\nu}\partial_\mu\phi\,\delta\phi \right) + \partial_\nu\left(\sqrt{-g}g^{\mu\nu}\partial_\mu\phi\right)\delta\phi - \sqrt{-g}V_{,\phi}\delta\phi \right].
+\end{align}
+Discarding the total divergence term via Gauss's theorem yields the covariant Klein--Gordon equation:
+\begin{equation}
+\frac{1}{\sqrt{-g}}\partial_\mu\left(\sqrt{-g}g^{\mu\nu}\partial_\nu\phi\right) - V_{,\phi} = 0.
+\end{equation}
+In a spatially flat Friedmann--Lema\^{\i}tre--Robertson--Walker (FLRW) metric,
+\begin{equation}
+\dd s^2 = -\dd t^2 + a^2(t)\delta_{ij}\dd x^i\dd x^j,
+\end{equation}
+the metric determinant is $\sqrt{-g} = a^3(t)$. Assuming spatial homogeneity for the background field $\phi = \phi(t)$, the temporal derivative term becomes
+\begin{equation}
+\frac{1}{a^3}\partial_0\left(a^3 g^{00}\partial_0\phi\right) = \frac{1}{a^3}\frac{\dd}{\dd t}\left(-a^3\dot\phi\right) = -\ddot\phi - 3\frac{\dot a}{a}\dot\phi.
+\end{equation}
+Defining the Hubble expansion rate $H(t) \equiv \dot a / a$, we obtain the classical equation of motion:
+\begin{equation}
+\boxed{\ddot\phi + 3H\dot\phi + V_{,\phi} = 0}.
+\label{eq:klein_gordon}
+\end{equation}
+Equation~\eqref{eq:klein_gordon} is the equation of motion for a point particle moving in potential $V(\phi)$ subject to a velocity-dependent friction term $3H\dot\phi$, known as \emph{Hubble friction} \cite{turner1983scalar,smith2020oscillating}.
+
+\subsection{Stress-energy tensor, energy density, pressure, and equation of state}
+The stress-energy tensor is defined by varying the action with respect to the inverse metric:
+\begin{equation}
+T_{\mu\nu} \equiv -\frac{2}{\sqrt{-g}}\frac{\delta S_\phi}{\delta g^{\mu\nu}} = \partial_\mu\phi\partial_\nu\phi - g_{\mu\nu}\left[ \frac{1}{2}g^{\alpha\beta}\partial_\alpha\phi\partial_\beta\phi + V(\phi) \right].
+\end{equation}
+For a homogeneous field $\phi(t)$ in flat FLRW, $g_{00} = -1$ and $g_{ij} = a^2\delta_{ij}$. The mixed components $T^\mu{}_\nu = g^{\mu\alpha}T_{\alpha\nu}$ describe an ideal fluid, $T^\mu{}_\nu = \operatorname{diag}(-\rho_\phi, p_\phi, p_\phi, p_\phi)$. 
+
+For the time-time component:
+\begin{equation}
+T^0{}_0 = g^{00}T_{00} = -(-1)\left[ \dot\phi^2 - (-1)\left(-\frac{1}{2}\dot\phi^2 + V\right) \right] = -\left( \frac{1}{2}\dot\phi^2 + V(\phi) \right) \equiv -\rho_\phi.
+\end{equation}
+Hence, the scalar field energy density is
+\begin{equation}
+\boxed{\rho_\phi = \frac{1}{2}\dot\phi^2 + V(\phi)}.
+\label{eq:rho_phi}
+\end{equation}
+For the space-space components ($i = j$):
+\begin{equation}
+T^i{}_i = g^{ii}T_{ii} = \frac{1}{a^2}\left[ 0 - a^2\left(-\frac{1}{2}\dot\phi^2 + V\right) \right] = \frac{1}{2}\dot\phi^2 - V(\phi) \equiv p_\phi.
+\end{equation}
+Hence, the scalar field pressure is
+\begin{equation}
+\boxed{p_\phi = \frac{1}{2}\dot\phi^2 - V(\phi)}.
+\label{eq:p_phi}
+\end{equation}
+The instantaneous equation-of-state parameter $w_\phi \equiv p_\phi / \rho_\phi$ is therefore
+\begin{equation}
+\boxed{w_\phi = \frac{\frac{1}{2}\dot\phi^2 - V(\phi)}{\frac{1}{2}\dot\phi^2 + V(\phi)}}.
+\label{eq:w_phi}
+\end{equation}
+When potential energy dominates ($\frac{1}{2}\dot\phi^2 \ll V$), $w_\phi \to -1$, behaving as dark energy; when kinetic energy dominates ($\frac{1}{2}\dot\phi^2 \gg V$), $w_\phi \to +1$, corresponding to stiff kination.
+
+\subsection{Hubble friction and the frozen-field regime}
+In the deep radiation era ($z \gg 10^4$), the expansion rate is dominated by relativistic species: $H(a) \approx H_0\sqrt{\Omega_{r,0}}a^{-2} \gg 1$. Expanding the potential gradient about the initial field displacement $\phi_i$:
+\begin{equation}
+V_{,\phi} \approx m_{\mathrm{eff}}^2 (\phi - \phi_0), \qquad m_{\mathrm{eff}}^2 \equiv V_{,\phi\phi}(\phi_i).
+\end{equation}
+The equation of motion~\eqref{eq:klein_gordon} acts as a damped harmonic oscillator with damping coefficient $\gamma = 3H$. When
+\begin{equation}
+H \gg m_{\mathrm{eff}},
+\end{equation}
+the system is heavily overdamped. In this regime, the acceleration term $\ddot\phi$ quickly decays, establishing terminal balance:
+\begin{equation}
+3H\dot\phi \approx -V_{,\phi} \implies \dot\phi \approx -\frac{V_{,\phi}(\phi_i)}{3H} \to 0.
+\end{equation}
+Because field motion is suppressed ($\dot\phi \approx 0$), the kinetic energy is negligible relative to the potential:
+\begin{equation}
+\rho_\phi \simeq V(\phi_i) = \mathrm{const}, \qquad p_\phi \simeq -V(\phi_i), \qquad w_\phi \simeq -1.
+\end{equation}
+This explains why an axion-like field acts naturally as dark energy at early times: it is frozen on the potential slope by Hubble friction \cite{poulin2018ula,smith2020oscillating}. The field remains static until $H(t) \sim m_{\mathrm{eff}}$, at which point Hubble friction yields to the potential gradient and the field rolls down the potential well.
+
+\subsection{The axion-like EDE potential and monomial expansion}
+Following Poulin et~al.~\cite{poulin2018ula,poulin2019ede}, canonical axion-like Early Dark Energy adopts the periodic potential
+\begin{equation}
+\boxed{V(\phi) = m^2f^2\left[ 1 - \cos\left(\frac{\phi}{f}\right) \right]^n},
+\label{eq:axion_potential}
+\end{equation}
+where $m$ denotes the axion mass scale, $f$ is the axion decay constant, and $n$ is an integer exponent (canonically $n=3$). Defining the dimensionless misalignment field angle
+\begin{equation}
+\theta \equiv \frac{\phi}{f},
+\end{equation}
+the potential becomes $V(\theta) = m^2f^2[1 - \cos\theta]^n$. 
+
+Near the bottom of the potential well ($\theta \ll 1$), Taylor expanding the cosine gives
+\begin{equation}
+1 - \cos\theta = \frac{\theta^2}{2} - \frac{\theta^4}{24} + \mathcal O(\theta^6).
+\end{equation}
+Substituting this into Equation~\eqref{eq:axion_potential}:
+\begin{equation}
+V(\phi) \simeq m^2f^2 \left( \frac{\theta^2}{2} \right)^n = \frac{m^2f^2}{2^n}\left(\frac{\phi}{f}\right)^{2n} \propto \phi^{2n}.
+\end{equation}
+Thus, around its minimum, the periodic potential reduces to a monomial potential $V(\phi) \propto \phi^p$ with power $p = 2n$. For the canonical choice $n=3$, $V(\phi) \propto \phi^6$.
+
+\subsection{Turner (1983) virial theorem, anharmonicity, and oscillation-averaged dilution}
+Once $H \lesssim m_{\mathrm{eff}}$, the field rolls into the well and undergoes rapid, coherent oscillations about the minimum $\phi = 0$. Because the oscillation period $\tau_{\mathrm{osc}} \sim m_{\mathrm{eff}}^{-1}$ is much shorter than the cosmological expansion timescale $H^{-1}$, the background stress-energy can be cycle-averaged \cite{turner1983scalar}.
+
+Consider a general monomial potential $V(\phi) = \lambda \phi^p$. Multiplying the undamped Klein--Gordon equation $\ddot\phi + V_{,\phi} = 0$ by $\phi$ and averaging over one complete period $T$:
+\begin{equation}
+\frac{1}{T}\int_0^T \phi\ddot\phi\dd t + \frac{1}{T}\int_0^T \phi V_{,\phi}\dd t = 0.
+\end{equation}
+Integrating the first term by parts:
+\begin{equation}
+\frac{1}{T}\left[ \phi\dot\phi \right]_0^T - \frac{1}{T}\int_0^T \dot\phi^2\dd t + \frac{1}{T}\int_0^T \phi V_{,\phi}\dd t = 0.
+\end{equation}
+Since the motion is periodic, the boundary term vanishes: $\left[\phi\dot\phi\right]_0^T = 0$. For a monomial potential $V(\phi) \propto \phi^p$, Euler's homogeneous function theorem implies $\phi V_{,\phi} = p V(\phi)$. Therefore:
+\begin{equation}
+\langle \dot\phi^2 \rangle = p \langle V(\phi) \rangle,
+\end{equation}
+where $\langle \dots \rangle$ denotes the cycle average. The average kinetic energy is $\langle E_{\mathrm{kin}} \rangle = \frac{1}{2}\langle \dot\phi^2 \rangle = \frac{p}{2}\langle V \rangle$.
+
+Substituting this virial result into the cycle-averaged equation of state:
+\begin{equation}
+\langle w_\phi \rangle = \frac{\langle p_\phi \rangle}{\langle \rho_\phi \rangle} = \frac{\frac{1}{2}\langle \dot\phi^2 \rangle - \langle V \rangle}{\frac{1}{2}\langle \dot\phi^2 \rangle + \langle V \rangle} = \frac{\frac{p}{2}\langle V \rangle - \langle V \rangle}{\frac{p}{2}\langle V \rangle + \langle V \rangle} = \frac{p - 2}{p + 2}.
+\end{equation}
+For our axion potential near the minimum, $p = 2n$. Hence:
+\begin{equation}
+\boxed{\langle w_\phi \rangle = \frac{2n - 2}{2n + 2} = \frac{n - 1}{n + 1}}.
+\label{eq:w_averaged}
+\end{equation}
+Integrating the cosmic energy conservation equation $\dot\rho_\phi + 3H(1 + \langle w_\phi \rangle)\rho_\phi = 0$:
+\begin{equation}
+\frac{\dd\ln\rho_\phi}{\dd\ln a} = -3(1 + \langle w_\phi \rangle) = -3\left(1 + \frac{n - 1}{n + 1}\right) = -\frac{6n}{n + 1}.
+\end{equation}
+Integrating directly yields the asymptotic dilution scaling:
+\begin{equation}
+\boxed{\rho_\phi(a) \propto a^{-6n/(n+1)}}.
+\label{eq:dilution_law}
+\end{equation}
+Evaluating Equation~\eqref{eq:dilution_law} for integer exponents $n$:
+\begin{enumerate}
+\item \textbf{$n = 1$ (Quadratic / Standard Axion DM):} $\langle w_\phi \rangle = 0 \implies \rho_\phi \propto a^{-3}$ (matter-like dilution).
+\item \textbf{$n = 2$ (Quartic):} $\langle w_\phi \rangle = 1/3 \implies \rho_\phi \propto a^{-4}$ (radiation-like dilution).
+\item \textbf{$n = 3$ (Sextic / Canonical EDE):} $\langle w_\phi \rangle = 1/2 \implies \rho_\phi \propto a^{-9/2} = a^{-4.5}$ (dilutes \emph{faster than radiation}).
+\end{enumerate}
+Because $\rho_\phi \propto a^{-4.5}$ for $n=3$, the scalar field energy density drops precipitously following the peak, dropping below $1\%$ of the total cosmic energy within one decade of expansion.
+
+\subsubsection{Anharmonicity during initial roll}
+Equation~\eqref{eq:w_averaged} is an asymptotic limit valid when oscillation amplitudes are small ($\theta \ll 1$). For the full cosine potential $V(\theta) = m^2f^2[1-\cos\theta]^n$, when the field initially unlocks at $\theta_i \approx 2.8 \sim \pi$, it explores the anharmonic crest of the potential. The phase-space cycle average is
+\begin{equation}
+\langle w_\phi \rangle = \frac{\oint p_\phi \frac{\dd\phi}{\dot\phi}}{\oint \rho_\phi \frac{\dd\phi}{\dot\phi}} = \frac{\int_0^{\phi_{\mathrm{max}}} \frac{\rho_\phi - 2V(\phi)}{\sqrt{2[\rho_\phi - V(\phi)]}}\dd\phi}{\int_0^{\phi_{\mathrm{max}}} \frac{\rho_\phi}{\sqrt{2[\rho_\phi - V(\phi)]}}\dd\phi}.
+\end{equation}
+Near turning points ($\theta \to \pi$), the potential flattens, increasing the fraction of time spent with $\dot\phi \approx 0$. As established by Smith et~al.~\cite{smith2020oscillating}, this causes $\langle w_\phi \rangle$ to transition smoothly from $-1 \to 0 \to (n-1)/(n+1)$. Consequently, high-accuracy Boltzmann solvers must integrate the exact non-linear Klein--Gordon ODE through the peak before switching to fluid approximations in the deeply damped oscillatory regime.
+
+\section{Background Expansion and Acoustic Sound Horizon}
+\label{sec:background_expansion}
+
+\subsection{Phenomenological parameters: \texorpdfstring{$f_{\mathrm{EDE}}$}{fEDE}, \texorpdfstring{$z_c$}{zc}, and \texorpdfstring{$\theta_i$}{thetai}}
+Define the fractional energy contribution of the scalar field:
+\begin{equation}
+\boxed{\Omega_\phi(z) \equiv \frac{\rho_\phi(z)}{\rho_{\mathrm{tot}}(z)}}.
+\end{equation}
+The phenomenological descriptors that parameterize an EDE cosmology are:
+\begin{align}
+\boxed{\fEDE \equiv \max_z \Omega_\phi(z)},\\
+\boxed{\zc \equiv \operatorname*{arg\,max}_z \Omega_\phi(z)}.
+\end{align}
+Together with the initial field angle $\thetai \equiv \phi_i / f$, the parameter triplet
+\begin{equation}
+\left( \fEDE,\, \log_{10}\zc,\, \thetai \right)
+\end{equation}
+defines the canonical Early Dark Energy specification \cite{poulin2019ede}. External Boltzmann solvers ($\text{AxiCLASS}$ and $\text{CLASS\_EDE}$) employ multidimensional shooting algorithms that numerically invert requested values of $(\fEDE, \zc)$ to determine the potential mass and decay constant $(m, f)$ \cite{axiclass,classede}.
+
+\subsection{Modified Friedmann expansion equation}
+Einstein's equations in flat FLRW yield the first Friedmann equation:
+\begin{equation}
+H^2(a) = \frac{8\pi G}{3}\rho_{\mathrm{tot}}(a).
+\end{equation}
+Decomposing the cosmic energy density into radiation, non-relativistic matter, cosmological constant, and Early Dark Energy:
+\begin{equation}
+\rho_{\mathrm{tot}}(a) = \rho_{r,0}a^{-4} + \rho_{m,0}a^{-3} + \rho_{\Lambda,0} + \rho_\phi(a).
+\end{equation}
+Dividing by the critical density today $\rho_{\mathrm{crit},0} = 3H_0^2 / (8\pi G)$ gives the dimensionless expansion rate $E(a) \equiv H(a) / H_0$:
+\begin{equation}
+\boxed{E^2(a) = \Omega_{r,0}a^{-4} + \Omega_{m,0}a^{-3} + \Omega_{\Lambda,0} + \frac{\rho_\phi(a)}{\rho_{\mathrm{crit},0}}}.
+\label{eq:friedmann_ede}
+\end{equation}
+To isolate the background impact of EDE, we define the fractional expansion perturbation:
+\begin{equation}
+\boxed{\Delta_H(z) \equiv \frac{H_{\mathrm{EDE}}(z) - H_{\LCDM}(z)}{H_{\LCDM}(z)}}.
+\end{equation}
+Because $\rho_\phi(z) \ge 0$, $\Delta_H(z)$ is positive-definite, peaking around $z \sim \zc$.
+
+\subsection{Pre-recombination sound horizon suppression}
+The comoving sound horizon at photon decoupling ($z_* \approx 1090$) is
+\begin{equation}
+r_s(z_*) = \int_{z_*}^\infty \frac{c_s(z)}{H(z)}\dd z,
+\end{equation}
+where $c_s(z) = c / \sqrt{3[1 + 3\rho_b(z)/(4\rho_\gamma(z))]}$ is the baryon-photon sound speed. Because EDE injects energy density near $\zc \sim 10^{3.5} > z_*$, $H(z)$ is elevated in the denominator. Consequently:
+\begin{equation}
+H(z) \uparrow \quad (z > z_*) \implies \boxed{r_s(z_*) \downarrow}.
+\end{equation}
+The angular acoustic scale observed in the CMB is
+\begin{equation}
+\theta_* = \frac{r_s(z_*)}{D_A(z_*)}, \qquad D_A(z_*) = \int_0^{z_*} \frac{c}{H(z)}\dd z.
+\end{equation}
+Planck measures $\theta_*$ with sub-per-mille precision ($\theta_* = 0.0104110 \pm 0.00031$) \cite{planck2020params}. To hold $\theta_*$ invariant when $r_s(z_*)$ decreases, the comoving angular diameter distance $D_A(z_*)$ must contract by an identical proportion. Because $D_A(z_*)$ is dominated by low-redshift expansion, reducing $D_A$ requires increasing $H_0$. This is the geometric mechanism of the EDE resolution to the Hubble tension \cite{karwal2016ede,poulin2019ede}.
+
+\section{Linear Perturbations, Gauge Invariance, and Transfer Functions}
+\label{sec:perturbations}
+
+\subsection{Primordial curvature power spectrum vs.\ \texorpdfstring{$\sigma_8$}{sigma8}}
+Inflationary quantum fluctuations generate primordial curvature perturbations $\mathcal R(\bm k)$. The dimensionless primordial power spectrum is
+\begin{equation}
+\boxed{\mathcal P_{\mathcal R}(k) \equiv A_s \left( \frac{k}{k_*} \right)^{n_s - 1}},
+\end{equation}
+where $A_s$ is the primordial scalar amplitude at pivot wavenumber $k_* = 0.05\,\Mpc^{-1}$ and $n_s$ is the spectral index. 
+
+We emphasize the essential distinction:
+\begin{equation}
+\boxed{A_s \neq \sigma_8}.
+\end{equation}
+$A_s$ sets the amplitude of primordial gravitational potential fluctuations. In contrast, $\sigma_8$ is a late-time convolution over the processed matter power spectrum:
+\begin{equation}
+\sigma_8^2 = \frac{1}{2\pi^2}\int_0^\infty k^2 P_m(k, z=0) W^2(k R_8)\dd k, \qquad R_8 = 8\,h^{-1}\Mpc.
+\end{equation}
+In an EDE cosmology, holding $A_s$ fixed produces a higher $\sigma_8$ than $\Lambda\mathrm{CDM}$ due to the elevated $\omega_m$. Conversely, holding $\sigma_8$ fixed requires suppressing $A_s$. This distinction is vital when comparing literature benchmarks \cite{klypin2021ede}.
+
+\subsection{Transfer functions and matter power spectrum}
+Linear perturbation theory maps primordial curvature fluctuations $\mathcal R(\bm k)$ to late-time matter overdensity $\delta_m(\bm k, z)$ via the matter transfer function $T_m(k, z)$:
+\begin{equation}
+\delta_m(\bm k, z) = T_m(k, z) \mathcal R(\bm k).
+\end{equation}
+The dimensional matter power spectrum $P_m(k,z)$ defined by $\langle \delta_m(\bm k)\delta_m^*(\bm k')\rangle = (2\pi)^3\delta_D^{(3)}(\bm k - \bm k')P_m(k)$ is
+\begin{equation}
+\boxed{P_m(k, z) = \frac{2\pi^2}{k^3} \mathcal P_{\mathcal R}(k) |T_m(k, z)|^2}.
+\end{equation}
+We define the linear matter power spectrum ratio between EDE and $\Lambda\mathrm{CDM}$:
+\begin{equation}
+\boxed{R_P(k,z) \equiv \frac{P_{\mathrm{EDE}}(k,z)}{P_{\LCDM}(k,z)} - 1}.
+\end{equation}
+
+\subsection{Subhorizon linear matter perturbation equations}
+On sub-horizon scales in Newtonian gauge, the perturbation equations for pressureless cold dark matter ($\delta_m = \delta$, peculiar velocity $\bm v$) are:
+\begin{align}
+\text{Continuity:} \quad & \dot\delta + \frac{1}{a}\bm\nabla \cdot \bm v = 0,\\
+\text{Euler:} \quad & \dot{\bm v} + H\bm v = -\frac{1}{a}\bm\nabla\Phi,\\
+\text{Poisson:} \quad & \nabla^2\Phi = 4\pi G a^2 \bar\rho_m \delta.
+\end{align}
+Taking the divergence of the Euler equation:
+\begin{equation}
+\frac{1}{a}\bm\nabla \cdot \dot{\bm v} + \frac{H}{a}\bm\nabla \cdot \bm v = -\frac{1}{a^2}\nabla^2\Phi = -4\pi G \bar\rho_m \delta.
+\end{equation}
+From continuity, $\frac{1}{a}\bm\nabla \cdot \bm v = -\dot\delta$. Differentiating continuity with respect to cosmic time $t$:
+\begin{equation}
+\ddot\delta + \frac{\dd}{\dd t}\left(\frac{1}{a}\bm\nabla \cdot \bm v\right) = 0 \implies \frac{1}{a}\bm\nabla \cdot \dot{\bm v} - \frac{\dot a}{a^2}\bm\nabla \cdot \bm v = -\ddot\delta \implies \frac{1}{a}\bm\nabla \cdot \dot{\bm v} = -\ddot\delta - H\dot\delta.
+\end{equation}
+Substituting this back into the diverged Euler equation:
+\begin{equation}
+(-\ddot\delta - H\dot\delta) + H(-\dot\delta) = -4\pi G \bar\rho_m \delta,
+\end{equation}
+which immediately simplifies to
+\begin{equation}
+\boxed{\ddot\delta + 2H\dot\delta - 4\pi G \bar\rho_m \delta = 0}.
+\label{eq:linear_delta_ode}
+\end{equation}
+Equation~\eqref{eq:linear_delta_ode} governs subhorizon cold matter clustering. The expansion rate $H(t)$ provides cosmological Hubble damping against gravitational self-attraction $4\pi G\bar\rho_m$.
+
+\subsubsection{Gauge equivalence on subhorizon scales}
+Boltzmann solvers ($\text{CLASS}$, $\text{AxiCLASS}$) integrate linear perturbation equations in synchronous gauge by default \cite{ma1995perturbations,lesgourgues2011class1}. In synchronous gauge, the metric perturbation is characterized by traces $h$ and $\eta$. In conformal Newtonian gauge, metric perturbations are described by scalar potentials $\Phi$ and $\Psi$. The gauge transformation between synchronous and Newtonian dark-matter density contrasts is \cite{ma1995perturbations}
+\begin{equation}
+\delta_m^{(\mathrm{syn})} = \delta_m^{(\mathrm{Newt})} - \frac{\dot{\bar\rho}_m}{\bar\rho_m}\alpha = \delta_m^{(\mathrm{Newt})} + 3\mathcal H\alpha,
+\end{equation}
+where $\mathcal H \equiv aH$ is conformal Hubble and $\alpha \equiv (\dot h + 6\dot\eta)/(2k^2)$. On subhorizon scales ($k \gg \mathcal H$), the gauge shift obeys $\mathcal H\alpha \sim \mathcal O\left((\mathcal H/k)^2\right)\Phi \ll \delta_m$, implying
+\begin{equation}
+\delta_m^{(\mathrm{syn})}(k, z) = \delta_m^{(\mathrm{Newt})}(k, z) + \mathcal O\left( \frac{a^2H^2}{k^2} \right).
+\end{equation}
+On halo-forming scales ($k \gtrsim 0.05\,h\,\Mpc^{-1}$), this difference is below $10^{-5}$. Thus, our Newtonian subhorizon derivation~\eqref{eq:linear_delta_ode} describes the identical clustering field evaluated in synchronous gauge by Boltzmann codes.
+
+\subsubsection{Scalar perturbation Jeans scale and non-clustering condition}
+In the fluid description \cite{smith2020oscillating}, scalar field perturbations $\delta_\phi \equiv \delta\rho_\phi / \bar\rho_\phi$ evolve with effective sound speed
+\begin{equation}
+c_s^2(k, a) \approx \frac{2\left(\frac{k^2}{4m_{\mathrm{eff}}^2 a^2}\right) + w_\phi}{1 + \frac{k^2}{4m_{\mathrm{eff}}^2 a^2}}.
+\end{equation}
+The oscillating field possesses an effective comoving Jeans wavenumber
+\begin{equation}
+k_J(a) \sim a \sqrt{m_{\mathrm{eff}} H}.
+\end{equation}
+For modes with $k \ll k_J$, the field responds to gravitational potentials; however, on scales $k \gg k_J$, pressure forces dominate ($c_s^2 \to 1$), dispersing scalar fluctuations as relativistic acoustic waves. Because $m_{\mathrm{eff}} \gg H$ during oscillations, $k_J$ is localized to cosmological scales. On halo scales ($k \gg k_J$), scalar perturbations do not cluster, guaranteeing that Early Dark Energy modifies halo collapse strictly via the background expansion rate $H(a)$ and large-scale potential evolution.
+
+\section{Linear Growth and Scale-Dependence Diagnostics}
+\label{sec:growth}
+
+\subsection{Heath (1977) growth factor ODE in scale factor \texorpdfstring{$a$}{a}}
+Separating spatial and temporal dependence, write $\delta(\bm x, a) = D(a)\delta(\bm x, a_0)$, where $D(a)$ is the linear growth factor. Transforming derivatives from cosmic time $t$ to scale factor $a$:
+\begin{equation}
+\frac{\dd}{\dd t} = \dot a \frac{\dd}{\dd a} = aH \frac{\dd}{\dd a}.
+\end{equation}
+Applying this operator:
+\begin{align}
+\dot D &= aH D',\\
+\ddot D &= aH \frac{\dd}{\dd a}(aH D') = a^2H^2 D'' + aH\left(H + aH'\right)D',
+\end{align}
+where primes denote $\dd/\dd a$. Substituting into Equation~\eqref{eq:linear_delta_ode}:
+\begin{equation}
+a^2H^2 D'' + aH(H + aH')D' + 2H(aH D') - 4\pi G \bar\rho_m D = 0.
+\end{equation}
+Combining terms:
+\begin{equation}
+a^2H^2 D'' + \left( 3aH^2 + a^2H H' \right)D' - 4\pi G \bar\rho_m D = 0.
+\end{equation}
+Dividing by $a^2H^2$:
+\begin{equation}
+D'' + \left[ \frac{3}{a} + \frac{H'}{H} \right]D' - \frac{4\pi G \bar\rho_m}{a^2H^2}D = 0.
+\end{equation}
+Using $\bar\rho_m(a) = \frac{3H_0^2\Omega_{m,0}}{8\pi G}a^{-3}$ and $H'/H = \dd\ln H/\dd a$, we obtain Heath's growth ODE \cite{heath1977growth}:
+\begin{equation}
+\boxed{D''(a) + \left[ \frac{3}{a} + \frac{\dd\ln H}{\dd a} \right]D'(a) - \frac{3}{2}\frac{\Omega_{m,0}H_0^2}{a^5 H^2(a)}D(a) = 0}.
+\label{eq:growth_ode}
+\end{equation}
+In an EDE cosmology, elevated early expansion $H(a)$ suppresses $D(a)$ relative to $\Lambda\mathrm{CDM}$.
+
+\subsection{Linear growth rate and effective solver growth diagnostic}
+The logarithmic growth rate $f(a)$ describes the velocity divergence:
+\begin{equation}
+\boxed{f(a) \equiv \frac{\dd\ln D}{\dd\ln a} = \frac{a}{D}\frac{\dd D}{\dd a}}.
+\end{equation}
+Because real Boltzmann solvers evolve relativistic species and scale-dependent scalar perturbations, true linear growth is slightly scale-dependent. We define the empirical effective growth factor from the power grid:
+\begin{equation}
+\boxed{D_{\mathrm{eff}}(k, z) \equiv \sqrt{\frac{P_m(k, z)}{P_m(k, 0)}}}, \qquad D_{\mathrm{eff}}(k, 0) \equiv 1.
+\end{equation}
+
+\subsection{Scale-dependence diagnostic \texorpdfstring{$\epsilon_D(k,z)$}{epsilonD(k,z)}}
+To determine whether scale-independent growth models can be applied cleanly on halo scales, we define the scale-dependence diagnostic:
+\begin{equation}
+\boxed{\epsilon_D(k, z) \equiv \frac{D_{\mathrm{eff}}(k, z)}{D_{\mathrm{eff}}(k_{\mathrm{ref}}, z)} - 1},
+\end{equation}
+where $k_{\mathrm{ref}} = 0.01\,h\,\Mpc^{-1}$. This diagnostic is reported for each retained solver run; its value should not be interpreted as evidence for a scale-independent approximation without a stated model, redshift range, and numerical-support check.
+
+\section{From Linear Power Spectra to Halo Variance and Analytical Jacobians}
+\label{sec:variance}
+
+\subsection{Mass--radius mapping and top-hat smoothing}
+Halo abundance depends on linear density fluctuations smoothed over a Lagrangian comoving radius $R$. The enclosed comoving mass is
+\begin{equation}
+\boxed{M = \frac{4\pi}{3}\rhobar R^3},
+\label{eq:mass_radius}
+\end{equation}
+where $\rhobar = \Omega_{m,0}\rho_{\mathrm{crit},0}$ with $\rho_{\mathrm{crit},0} = 2.775366 \times 10^{11}\,(\Msun/h)/(\Mpc/h)^3$. Inverting:
+\begin{equation}
+\boxed{R(M) = \left( \frac{3M}{4\pi\rhobar} \right)^{1/3}}.
+\end{equation}
+The real-space spherical top-hat filter of radius $R$ has Fourier transform:
+\begin{equation}
+\boxed{W(x) = 3\,\frac{\sin x - x\cos x}{x^3}}, \qquad x \equiv kR.
+\label{eq:tophat}
+\end{equation}
+At small $x$, direct evaluation of Equation~\eqref{eq:tophat} suffers catastrophic floating-point cancellation. Our implementation evaluates the Horner-form Taylor expansion:
+\begin{equation}
+W(x) = 1 - \frac{x^2}{10} + \frac{x^4}{280} - \frac{x^6}{15120} + \mathcal O(x^8) \qquad (|x| < 10^{-2}),
+\end{equation}
+avoiding cancellation near the origin; its accuracy is covered by analytic and numerical tests.
+
+\subsection{Smoothed mass variance quadrature}
+The variance of the density field smoothed on scale $R$ is
+\begin{equation}
+\sigma^2(R) = \int \frac{\dd^3k}{(2\pi)^3} P(k) W^2(kR) = \frac{1}{2\pi^2}\int_0^\infty k^2 P(k) W^2(kR) \dd k.
+\end{equation}
+Transforming to logarithmic wavenumber $\dd k = k\dd\ln k$:
+\begin{equation}
+\boxed{\sigma^2(R) = \int_{-\infty}^\infty \Delta^2(k) W^2(kR) \dd\ln k}, \qquad \Delta^2(k) \equiv \frac{k^3P(k)}{2\pi^2}.
+\label{eq:variance_integral}
+\end{equation}
+Evaluating Equation~\eqref{eq:variance_integral} via logarithmic Simpson quadrature cleanly captures power spanning many decades in wavenumber.
+
+\subsection{Exact analytical logarithmic Jacobian}
+The halo mass function requires the logarithmic derivative of inverse variance:
+\begin{equation}
+J(M) \equiv \frac{\dd\ln\sigma^{-1}}{\dd\ln M} = -\frac{1}{\sigma}\frac{\dd\sigma}{\dd\ln M} = -\frac{1}{2\sigma^2}\frac{\dd\sigma^2}{\dd\ln M}.
+\end{equation}
+From Equation~\eqref{eq:mass_radius}, $\dd\ln M = 3\dd\ln R$, hence:
+\begin{equation}
+J(M) = -\frac{1}{6\sigma^2}\frac{\dd\sigma^2}{\dd\ln R} = -\frac{R}{6\sigma^2}\frac{\dd\sigma^2}{\dd R}.
+\end{equation}
+Differentiating the variance integral~\eqref{eq:variance_integral} under the integral sign:
+\begin{equation}
+\frac{\dd\sigma^2}{\dd R} = \int \dd\ln k\,\Delta^2(k)\,\frac{\dd}{\dd R}\left[ W^2(kR) \right] = 2\int \dd\ln k\,\Delta^2(k)\,W(kR)\,k\,W'(kR).
+\end{equation}
+The analytical derivative of the top-hat window $W'(x) \equiv \dd W/\dd x$ is
+\begin{equation}
+\boxed{W'(x) = \frac{3}{x}\left[ \frac{\sin x}{x} - W(x) \right] = 3\,\frac{x^2\sin x + 3x\cos x - 3\sin x}{x^4}}.
+\end{equation}
+Taylor expanding around $x = 0$:
+\begin{equation}
+W'(x) = -x\left( \frac{1}{5} - \frac{x^2}{70} + \frac{x^4}{2520} - \frac{x^6}{166320} \right) + \mathcal O(x^9).
+\end{equation}
+Combining these relations yields the exact analytical Jacobian:
+\begin{equation}
+\boxed{J(M) = -\frac{1}{3\sigma^2}\int_{-\infty}^\infty \dd\ln k\,\Delta^2(k)\,W(kR)\left[ kR\,W'(kR) \right]}.
+\label{eq:analytical_jacobian}
+\end{equation}
+Evaluating $J(M)$ directly via Equation~\eqref{eq:analytical_jacobian} eliminates finite-difference noise. The remaining error is controlled by the finite $k$ domain and quadrature resolution, which are reported with each calculation.
+
+\subsection{Analytic power-law spectrum scaling benchmark}
+For an idealized power-law spectrum $P(k) = A k^n$, substituting $x \equiv kR$ gives
+\begin{equation}
+\sigma^2(R) = \frac{A}{2\pi^2}R^{-(n+3)}\int_0^\infty x^{n+2}W^2(x)\dd x \propto R^{-(n+3)}.
+\end{equation}
+Since $M \propto R^3$,
+\begin{equation}
+\sigma(M) \propto M^{-(n+3)/6} \implies \boxed{\frac{\dd\ln\sigma^{-1}}{\dd\ln M} = \frac{n+3}{6}}.
+\label{eq:power_law_benchmark}
+\end{equation}
+Equation~\eqref{eq:power_law_benchmark} provides a closed-form analytical invariant for testing the numerical quadrature kernel.
+
+\subsection{Exact definition and independent verification of \texorpdfstring{$\sigma_8$}{sigma8}}
+The late-time variance in an $8\,h^{-1}\Mpc$ sphere is
+\begin{equation}
+\boxed{\sigma_8 \equiv \sigma(R = 8\,h^{-1}\Mpc, z=0)}.
+\end{equation}
+The release protocol verifies the independent logarithmic Simpson integrator against the solver-reported value:
+\begin{equation}
+\Delta_{\sigma_8} \equiv \left| \frac{\sigma_8^{\mathrm{DMRA}} - \sigma_8^{\mathrm{solver}}}{\sigma_8^{\mathrm{solver}}} \right| < 10^{-3}.
+\end{equation}
+For the retained four-model AxiCLASS/CLASS\_EDE gate, the largest discrepancy is $6.03\times10^{-5}$; the manifests record the output convention and spectra used for this check.
+
+\subsection{Local effective spectral index \texorpdfstring{$n_{\mathrm{eff}}(M,z)$}{neff(M,z)}}
+Modern HMF non-universality parameterizations depend on the local spectral slope:
+\begin{equation}
+\boxed{n_{\mathrm{eff}}(k, z) \equiv \frac{\dd\ln P_m(k, z)}{\dd\ln k}}.
+\end{equation}
+Attaching this to a halo of mass $M$ at characteristic filter wavenumber $k_R = 1/R(M)$:
+\begin{equation}
+\boxed{n_{\mathrm{eff}}(M, z) \equiv \left. \frac{\dd\ln P_m(k, z)}{\dd\ln k} \right|_{k = 1/R(M)}}.
+\end{equation}
+
+\section{Halo Mass Function Multiplicity and the Evolution of Universality}
+\label{sec:hmf_universality}
+
+\subsection{Peak height and the Rosetta Stone of conventions}
+We define linear peak height as
+\begin{equation}
+\boxed{nu(M, z) \equiv \frac{\delta_c(z)}{\sigma(M, z)}}, \qquad \delta_c \simeq 1.68647.
+\end{equation}
+The literature exhibits conflicting multiplicity conventions:
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{Peak-height variable:} We adopt $\nu \equiv \delta_c / \sigma$. Excursion-set papers \cite{ShethTormen1999} often define $\nu' \equiv \delta_c^2 / \sigma^2 = \nu^2$. Under that square convention, $\dd\nu' = 2\nu\dd\nu$.
+\item \textbf{Multiplicity functions:} The differential mass fraction per unit $\ln\nu$ is $f(\nu) \equiv \dd F/\dd\ln\nu$. In our convention,
+\begin{equation}
+f(\sigma) = f(\nu), \qquad \nu f(\nu) = \frac{\dd F}{\dd\ln\nu}.
+\end{equation}
+\item \textbf{Differential abundance:} Number densities satisfy
+\begin{equation}
+\frac{\dd n}{\dd\ln M} = M\frac{\dd n}{\dd M}, \qquad \frac{\dd n}{\dd\log_{10} M} = \ln(10)\,\frac{\dd n}{\dd\ln M} \simeq 2.302585\,\frac{\dd n}{\dd\ln M}.
+\end{equation}
+\end{enumerate}
+The universal transformation from multiplicity to differential abundance is
+\begin{equation}
+\boxed{\frac{\dd n}{\dd\ln M} = \frac{\rhobar}{M}\,f(\nu)\,J(M) = \frac{\rhobar}{M}\,f(\nu)\,\frac{\dd\ln\sigma^{-1}}{\dd\ln M}}.
+\label{eq:hmf_master}
+\end{equation}
+
+\subsection{Press--Schechter derivation and mass fraction normalization}
+Press \& Schechter \cite{PressSchechter1974} modeled collapse by thresholding Gaussian smoothed density fluctuations:
+\begin{equation}
+p(\delta; M) = \frac{1}{\sqrt{2\pi}\sigma(M)}\exp\left[ -\frac{\delta^2}{2\sigma^2(M)} \right].
+\end{equation}
+The probability of exceeding spherical collapse threshold $\delta_c$ is
+\begin{equation}
+P(\delta > \delta_c) = \frac{1}{2}\operatorname{erfc}\left( \frac{\delta_c}{\sqrt{2}\sigma} \right) = \frac{1}{2}\operatorname{erfc}\left( \frac{\nu}{\sqrt{2}} \right).
+\end{equation}
+Introducing the factor-of-two mass accounting resolution:
+\begin{equation}
+F(>M) = \operatorname{erfc}\left( \frac{\nu}{\sqrt{2}} \right) \implies \frac{\dd F}{\dd\nu} = -\sqrt{\frac{2}{\pi}}e^{-\nu^2/2}.
+\end{equation}
+Converting to multiplicity:
+\begin{equation}
+\boxed{f_{\rm PS}(\nu) = \sqrt{\frac{2}{\pi}}\nu e^{-\nu^2/2}}.
+\label{eq:ps_multiplicity}
+\end{equation}
+Integrating over all peak heights confirms total mass conservation:
+\begin{equation}
+\int_0^\infty f_{\rm PS}(\nu)\dd\ln\nu = \sqrt{\frac{2}{\pi}}\int_0^\infty e^{-\nu^2/2}\dd\nu = 1.
+\end{equation}
+
+\subsection{Excursion sets and the cloud-in-cloud problem}
+The ad-hoc factor of two in Press--Schechter reflects the \emph{cloud-in-cloud problem}: a point uncollapsed on small smoothing scales may reside inside a larger collapsed entity. Bond et~al.~\cite{BondEtAl1991} formulated collapse as a first-crossing Brownian random walk in variance $S \equiv \sigma^2$ with an absorbing barrier at $\delta_c$. The resulting first-crossing distribution,
+\begin{equation}
+\mathcal F(S) = \frac{\delta_c}{\sqrt{2\pi}}S^{-3/2}\exp\left(-\frac{\delta_c^2}{2S}\right),
+\end{equation}
+yields the exact Press--Schechter mass function without inserting arbitrary doubling factors.
+
+\subsection{Rare-peak exponential sensitivity and high-redshift response}
+High-redshift massive halos occupy the extreme tail of the density field ($\nu \gg 1$). Differentiating Equation~\eqref{eq:ps_multiplicity} with respect to $\sigma$:
+\begin{equation}
+\ln f_{\rm PS} = \frac{1}{2}\ln\left(\frac{2}{\pi}\right) + \ln\nu - \frac{\nu^2}{2}.
+\end{equation}
+Using $\ln\nu = \ln\delta_c - \ln\sigma \implies \partial\ln\nu/\partial\ln\sigma = -1$:
+\begin{equation}
+\frac{\partial\ln f_{\rm PS}}{\partial\ln\sigma} = \left(1 - \nu^2\right)(-1) = \nu^2 - 1.
+\end{equation}
+In the rare-peak regime $\nu \gg 1$:
+\begin{equation}
+\boxed{\frac{\partial\ln f_{\rm PS}}{\partial\ln\sigma} \approx \nu^2 \qquad (\nu \gg 1)}.
+\label{eq:rare_peak_sensitivity}
+\end{equation}
+Equation~\eqref{eq:rare_peak_sensitivity} has profound implications for Early Dark Energy. At $z \sim 8$, halos of mass $M \sim 10^{11}\,\Msun/h$ correspond to $\nu \sim 4\text{--}5$, yielding $\nu^2 \sim 16\text{--}25$. Consequently, a modest $2\%$ enhancement in $\sigma(M,z)$ produces an exponential $30\%\text{--}50\%$ surge in halo abundance. High-redshift halos act as an extraordinarily sensitive lever arm on early perturbation physics.
+
+\subsection{Sheth--Tormen and ellipsoidal collapse}
+Sheth \& Tormen \cite{ShethTormen1999} generalized spherical collapse to ellipsoidal collapse with a moving barrier:
+\begin{equation}
+\boxed{f_{\rm ST}(\nu) = A\sqrt{\frac{2a}{\pi}}\left[ 1 + (a\nu^2)^{-p} \right]\nu\exp\left( -\frac{a\nu^2}{2} \right)},
+\end{equation}
+with canonical parameters $a = 0.707$ and $p = 0.3$. Enforcing unit mass fraction $\int_0^\infty f_{\rm ST}(\nu)\dd\ln\nu = 1$ fixes the normalization:
+\begin{equation}
+\boxed{A^{-1} = 1 + \frac{2^{-p}}{\sqrt\pi}\Gamma\left(\frac{1}{2} - p\right)}.
+\end{equation}
+For $p = 0.3$, $A \simeq 0.32218$. In the limit $a = 1, p = 0$, Sheth--Tormen reduces exactly to Press--Schechter.
+
+\subsection{The evolution of halo mass function universality}
+Tracing the historical evolution of HMF universality contextualizes our research:
+\begin{itemize}
+\item \textbf{Early boundaries:} Jenkins et~al.~\cite{JenkinsEtAl2001} showed that Friends-of-Friends ($b=0.2$) halos could be fit by a universal form across CDM variants to $\sim 10\text{--}20\%$. Warren et~al.~\cite{WarrenEtAl2006} identified finite-particle sampling biases and established early evidence that universality breaks at the few-percent level.
+\item \textbf{Redshift and overdensity evolution:} Tinker et~al.~\cite{TinkerEtAl2008} calibrated spherical-overdensity fits from $z=0$ to $2.5$:
+\begin{equation}
+f(\sigma) = A\left[ \left(\frac{\sigma}{b}\right)^{-a} + 1 \right]\exp\left(-\frac{c}{\sigma^2}\right),
+\end{equation}
+demonstrating that parameters $(A, a, b, c)$ evolve with redshift. Watson et~al.~\cite{WatsonEtAl2013} verified departures out to $z=30$, and Despali et~al.~\cite{DespaliEtAl2016} showed that virial overdensity definitions adhere more closely to universality than fixed overdensity thresholds.
+\item \textbf{Separating growth from shape:} Ondaro-Mallea et~al.~\cite{OndaroMalleaEtAl2022} performed numerical experiments varying growth rate $f(z)$ while keeping linear spectrum shape invariant, proving that halo abundance retains physical memory of growth history.
+\item \textbf{Testing linear sufficiency:} Guo et~al.~\cite{GuoEtAl2024} demonstrated that the instantaneous linear spectrum $P(k)$ encodes the dominant predictive information for standard dark energy cosmologies.
+\item \textbf{The modern baseline:} Fiorilli et~al.~\cite{FiorilliEtAl2026} (\emph{Evolution Mapping III}) restored percent-level accuracy across arbitrary cosmologies by parameterizing $f(\sigma)$ via the recent growth history alongside the local spectral slope $n_{\rm eff}(M)$.
+\end{itemize}
+
+\section{Computational Architecture and Independent Invariant Auditing}
+\label{sec:auditing}
+
+To prevent systematic numerical errors, we enforce strict invariance criteria:
+\begin{enumerate}
+\item \textbf{Unit Gatekeeper Invariance:} Strict dimensional scaling laws ($k_{\rm DMRA} = k_{\rm CLASS}/h$ and $P_{\rm DMRA} = P_{\rm CLASS} \times h^3$) preserve the dimensionless variance integral $\int k^2 P(k)\dd k$ to machine precision ($\Delta < 10^{-15}$).
+\item \textbf{Guarded Power Spectrum Interpolation:} Tabulated spectra reject out-of-domain extrapolation by default, reporting finite-$k$ boundary edge diagnostics to flag truncation artifacts.
+\item \textbf{Continuous $\Lambda\mathrm{CDM}$ Zero-Limit:} In the limit $f_{\rm EDE} \to 0$, compare the configured solver background to flat $\Lambda\mathrm{CDM}$ and retain the configuration and manifest.
+\item \textbf{Shooting Precision:} Compare realized peak fractions $\max_z \Omega_\phi(z)$ with requested $f_{\rm EDE}$ using a pre-registered tolerance.
+\item \textbf{Independent $\sigma_8$ Simpson Quadrature:} Compare independent DMRA logarithmic Simpson quadrature with the solver-reported $\sigma_8$ under the same matter convention.
+\item \textbf{Cross-Solver Parity:} Compare matched observables from $\text{AxiCLASS}$ and $\text{CLASS\_EDE}$ against a pre-registered tolerance.
+\item \textbf{Literature Comparison:} A literature agreement claim requires a matched observable definition, parameter convention, and retained comparison table.
+\end{enumerate}
+
+\section{The Matched-Cosmology Causal Framework}
+\label{sec:matched_framework}
+
+Our audited linear engine provides the complete mapping:
+\begin{equation}
+\mathcal L(\theta) \equiv \left\{ H(a),\, \Omega_\phi(a),\, P_m(k, z),\, D_{\mathrm{eff}}(k, z),\, f(a),\, \sigma(M, z),\, \nu(M, z),\, n_{\mathrm{eff}}(M, z) \right\}.
+\end{equation}
+To isolate the dynamical effect of early growth history from instantaneous linear field shape, we formulate the matched-cosmology causal experiment. Defining the power spectrum distance at target redshift $z_\star$:
+\begin{equation}
+d_P(A, B) \equiv \int_{k_{\mathrm{min}}}^{k_{\mathrm{max}}} w_k \left[ \ln P_A(k, z_\star) - \ln P_B(k, z_\star) \right]^2 \dd\ln k,
+\end{equation}
+and the growth history distance:
+\begin{equation}
+d_G(A, B) \equiv \int_0^{z_\star} w_z \left[ f_A(z) - f_B(z) \right]^2 \dd z,
+\end{equation}
+we optimize for cosmology pairs $(A, B)$ satisfying $d_P(A, B) \to 0$ while maximizing $d_G(A, B) \gg 0$. Conducting $N$-body simulations across matched pairs provides a definitive test of linear sufficiency in Early Dark Energy cosmologies.
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+We have specified theoretical foundations, perturbation physics, and a numerical auditing protocol connecting Early Dark Energy scalar-field dynamics to dark matter halo abundance. Analytical Jacobian integration, subhorizon gauge bookkeeping, scale-dependent growth diagnostics, and universality tracking provide a baseline for the next stage: archived external-solver comparisons and matched-cosmology $N$-body simulations.
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}

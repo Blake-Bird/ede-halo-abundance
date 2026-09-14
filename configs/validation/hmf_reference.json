@@ -1,0 +1,20 @@
+{
+  "name": "lcdm_reference_planck_like",
+  "omega_m0": 0.315,
+  "omega_b0": 0.049,
+  "h": 0.674,
+  "sigma8": 0.811,
+  "n_s": 0.965,
+  "mass_min": 1000000000,
+  "mass_max": 1000000000000000,
+  "mass_points": 80,
+  "k_min": 0.000001,
+  "k_max": 10000,
+  "k_points": 65537,
+  "sigma_relative_tolerance": 0.02,
+  "hmf_relative_tolerance": 0.01,
+  "grid_sigma_tolerance": 0.0001,
+  "grid_jacobian_tolerance": 0.001,
+  "edge_ratio_tolerance": 1e-8,
+  "delta_c": 1.68647
+}

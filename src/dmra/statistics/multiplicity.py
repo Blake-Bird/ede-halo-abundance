@@ -102,6 +102,10 @@ class Tinker2008Delta200MeanZ0:
     b: float = 2.57
     c: float = 1.19
 
+    def __post_init__(self) -> None:
+        if any(not np.isfinite(v) or v <= 0 for v in (self.A, self.a, self.b, self.c)):
+            raise ValueError("Tinker coefficients must be finite and positive")
+
     @property
     def name(self) -> str:
         return "Tinker et al. (2008), Delta=200m, z=0"

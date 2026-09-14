@@ -1,0 +1,6 @@
+{
+  "name": "CLASS_EDE",
+  "repository": "https://github.com/mwt5345/class_ede",
+  "commit": "5a131c91d657dd9a7c6364cc45b038710f8d0d97",
+  "build_provenance": "Existing local binary: original compiler and flags unknown. Run scripts/build_solvers.py for an audited build."
+}

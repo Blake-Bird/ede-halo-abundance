@@ -1,0 +1,6 @@
+{
+  "name": "AxiCLASS",
+  "repository": "https://github.com/PoulinV/AxiCLASS",
+  "commit": "ae9609e1f96ddebbb6cc8a46de94512514c68781",
+  "build_provenance": "Existing local binary: original compiler and flags unknown. Run scripts/build_solvers.py for an audited build."
+}

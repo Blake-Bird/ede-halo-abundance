@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from numpy.typing import ArrayLike
-from scipy.integrate import solve_ivp  # type: ignore[import-untyped]
+from scipy.integrate import solve_ivp
 
 from dmra._typing import FloatArray
 from dmra.cosmology.background import FlatLambdaCDM
@@ -43,8 +43,12 @@ def solve_linear_growth(
     then ``f = a D'/D``. This avoids differentiating an interpolated ``D(a)``.
     """
     a_query = np.atleast_1d(np.asarray(a, dtype=np.float64))
-    if a_query.ndim != 1:
-        raise ValueError("a must be one-dimensional")
+    if a_query.ndim != 1 or a_query.size == 0:
+        raise ValueError("a must be nonempty and one-dimensional")
+    if cosmology.omega_r0 > 0:
+        raise ValueError(
+            "matter-era initial conditions require omega_r0=0; use Boltzmann growth for radiation"
+        )
     if np.any(~np.isfinite(a_query)) or np.any(a_query <= 0.0):
         raise ValueError("a must be finite and positive")
     if np.any(np.diff(a_query) <= 0.0):
